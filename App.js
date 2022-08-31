@@ -1,74 +1,55 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View, Button, TextInput } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+// import HomeScreen from "./screens/HomeScreen";
+// import AboutScreen from "./screens/AboutScreen";
+import React, { useState } from "react";
+
+import FirstPage from "./pages/FirstPage";
+import SecondPage from "./pages/SecondPage";
+import ThirdPage from "./pages/ThirdPage";
 
 
-function HomeScreen({ navigation, route }) {
 
-  React.useEffect(() => {
-    if (route.params?.post) {
-      //Post updated,do somethin with 'route.params.post'
-      //For example, sent the post to the server      
-    }
-  }, [route.params?.post]);
-
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        title='Create Post'
-        onPress={() => navigation.navigate('CreatePost')}
-      />
-      <Text style={{ margin: 10 }}>Post:{route.params?.post}</Text>
-    </View>
-  );
-}
-
-function CreatePostScreen({ navigation, route }) {
-
-  const [postText, setPostText] = React.useState('');
-
-  return (
-    // use Fragment
-    <>
-      <TextInput
-        multiline
-        placeholder='Plese text here'
-        style={{ height: 200, padding: 10, backgroundColor: 'white' }}
-        onChangeText={setPostText}
-        value={postText}
-      />
-      <Button
-        title='Click'
-        onPress={() => {
-          //Pass params back to HomeScreen funchion
-          navigation.navigate('Home', { post: postText })
-        }}
-      />
-    </>
-
-  );
-}
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-        <Stack.Navigator 
-        initialRouteName='Home'
-        screenOptions={{
-          headerStyle:{backgroundColor : '#4578'},//เปลี่ยนสีหัวข้างบน
-          headerTintColor : '#ffff',//เปลี่ยนสีตัวหนังสือในหัวข้างบน
-          headerTitleStyle : {fontWeight:'bold',fontSize:30}//เปลี่ยนขนาดตัวหนังสือในหัวข้างบน
-        }}
-        >
-          <Stack.Screen name  = 'Home' component = {HomeScreen}/>
-          <Stack.Screen name  = 'CreatePost' component = {CreatePostScreen}/>
-        </Stack.Navigator>
-    </NavigationContainer>
-
+     <NavigationContainer>
+       <Stack.Navigator
+         initialRouteName="Home"
+         screenOptions={{
+           headerStyle: { backgroundColor: "#9448" },
+           headerTintColor: "#ffff",
+           headerTitleStyle: { fontWeight: "bold", fontSize: 40 },
+         }}
+       >
+         <Stack.Screen name="First Page" component={FirstPage} />
+         <Stack.Screen name="Second Page" component={SecondPage} />
+         <Stack.Screen name="Third Page" component={ThirdPage} />
+       </Stack.Navigator>
+     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, 
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
+  },
+  heading: {
+    fontSize: 25,
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  textStyle: {
+    textAlign: "center",
+    fontSize: 16,
+    marginVertical: 10,
+  },
+});
