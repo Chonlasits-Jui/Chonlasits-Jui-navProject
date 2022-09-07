@@ -1,7 +1,7 @@
 import { View, Text, Button, TextInput } from "react-native";
 import React from "react";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer,DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   createDrawerNavigator,
@@ -10,30 +10,45 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 
-function Feed() {
+const MyTheme ={
+  ...DefaultTheme,
+  colors:{
+    ...DefaultTheme.colors,
+    primary:'rgb(255,45,85)'
+  }
+};
+
+function Feed(navigation) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Feed Screen</Text>
+      <Button title = 'Open drawer' noPress={()=>navigation.openDrwer}>OPEN DRAWER</Button>
+      <Button title = 'Toggle drawer' noPress={()=>navigation.openDrwer}>TOGGLE DRAWER</Button>
     </View>
   );
 }
 
-function Article() {
+function Notifications() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Article Screen</Text>
+      <Text>Notifications</Text>
     </View>
   );
 }
+
+
 
 function CustomDrawercontent(props) {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
-      <DrawerItem label="Help" onPress={() => alert("Link to help")} />
+      <DrawerItem label="Close drawer" onPress={() => props.navigation.closeDrawer()} />
+      <DrawerItem label="Toddle drawer" onPress={() => props.navigation.toggleDrawer()} />
     </DrawerContentScrollView>
   );
 }
+
+
 
 const Drawer = createDrawerNavigator();
 
@@ -44,20 +59,20 @@ function MyDrawer() {
       drawerContent={(props) => < CustomDrawercontent {...props} />}
       screenOptions={{
         drawerStyle: {
-          backgroundColor: "#465464",
+          backgroundColor: "#464",
           width: 240,
         },
       }}
     >
       <Drawer.Screen name="Feed" component={Feed} />
-      <Drawer.Screen name="Article" component={Article} />
+      <Drawer.Screen name="Notifications" component={Notifications} />
     </Drawer.Navigator>
   );
 }
 
 const App = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <MyDrawer />
     </NavigationContainer>
   );
