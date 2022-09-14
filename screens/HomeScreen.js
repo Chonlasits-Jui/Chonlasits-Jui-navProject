@@ -34,7 +34,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Ionicons name="home" size={30} color="#008b" />
       <Text>Home Screen</Text>
-      <Button title="Open drawer" onPress={() => navigation.openDrawer()} />
+      
     </View>
   );
 };
