@@ -3,33 +3,50 @@ import {
   Text,
   View,
   FlatList,
-  Image
+  Image,
+  ActivityIndicator,
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
-const ProductScreen = () => {
-  const [product, setProduct] = useState(true);
- 
+const ProductScreen = ({navigation}) => {
+  const [product, setProduct] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const _renderItem = ({ item }) => {
     return (
-      <View stylele={{ flex: 1 }}>
-        <View style={{ flex: 1, flexDirection: "row", margin: 5 }}>
-          <Image
-            resizeMode="cover"
-            source={{ uri: item.picture }}
-            style={ styles.thumbnail }
-          />
-          <View style={styles.dataContainer}>
-            <View style = {styles.dataContent}>
-            <Text style={styles.title}>
-                {item.title}</Text>
-            <Text style={styles.detail}>
-                {item.detail}</Text>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TouchableOpacity
+        style ={styles.addButtonStyle}
+        onPress = {()=>{
+            navigation.navigate('Detail',{
+              id:item.id,
+              title:item.title
+            })
+        }}
+        
+        >
+          <View stylele={{ flex: 1 }}>
+            <View style={{ flex: 1, flexDirection: "row", margin: 5 }}>
+              <Image
+                resizeMode="cover"
+                source={{ uri: item.picture }}
+                style={styles.thumbnail}
+              />
+              <View style={styles.dataContainer}>
+                <View style={styles.dataContent}>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.detail}>{item.detail}</Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-      </View>
+        </TouchableOpacity>
+      </SafeAreaView>
     );
   };
   const ItemSeparatorView = () => {
@@ -38,31 +55,66 @@ const ProductScreen = () => {
       <View
         style={{
           height: 0.5,
-          width: '100%',
-          backgroundColor: '#C8C8C8',
+          width: "100%",
+          backgroundColor: "#C8C8C8",
         }}
       />
     );
   };
   const getData = async () => {
+    try {
+      setLoading(true);
       const res = await axios.get("https://api.codingthailand.com/api/course");
       console.log(res.data.data);
       //devicePixelRatio(JSON.stringify(res.data.data))
       setProduct(res.data.data);
-    };
-  useEffect(() => {
-    getData(); 
-  },[]);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError(error); //set error ไปที่ stateของ error ว่าเกิดจาก axios หรือ server
+    }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getData();
+    }, [])
+  );
+
+  /*useEffect(() => {
+      getData();
+     },[]);*/
+
+  if (error) {
+    //ถ้ามีerror เกิดขึ้นจะ return ui ต่อไปนี้กลับไป
+    return (
+      <View style={styles.container}>
+        <Text>{error.message}</Text>
+        <Text>เกิดข้อผิกพลาด ไม่สามารถติดต่อกับ server ได้</Text>
+      </View>
+    );
+  }
+
+  if (loading === true) {
+    return (
+      <View>
+        <ActivityIndicator color="#4654" size="large" />
+      </View>
+    );
+  }
+
+  const _onRefresh = () => {
+    getData();
+  };
   return (
     <View style={{ flex: 1, padding: 20 }}>
-  
-        <FlatList
-          data={product}
-          keyExtractor={(item,index) => item.id.toString()}
-          ItemSeparatorComponent={ItemSeparatorView}
-          renderItem={_renderItem}
-        />
-      
+      <FlatList
+        data={product}
+        keyExtractor={(item, index) => item.id.toString()}
+        ItemSeparatorComponent={ItemSeparatorView}
+        renderItem={_renderItem}
+        refreshing={loading}
+        onRefresh={_onRefresh}
+      />
     </View>
   );
 };
@@ -81,10 +133,8 @@ const styles = StyleSheet.create({
   dataContainer: {
     flex: 1,
   },
-
   thumbnail: {
     width: 70,
-
     height: 70,
   },
   dataContent: {
@@ -101,4 +151,8 @@ const styles = StyleSheet.create({
     color: "#888",
     fontWeight: "700",
   },
+  addButtonStyle: {
+    width: '100%',         
+    marginBottom: 15,
+},
 });
