@@ -19,6 +19,8 @@ import {
 import Homescreen from "./screens/Homescreen";
 import React from "react";
 import ProductScreen from "./screens/ProductScreen";
+import DetailScreen from "./screens/DetailScreen";
+
 const MyTheme = {
   ...DefaultTheme,
   colors: {
@@ -44,6 +46,27 @@ function CustomDrawerContent(props) {
     </SafeAreaView>
   );
 }
+
+const Stack = createNativeStackNavigator();
+
+function ProductStack(){
+  return(
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle:{
+          backgroundColor:'#1654'
+        },
+        headerTintColor:'#ffff',
+        headerBackTitleStyle:{
+          fontWeight:'bold'
+        }
+      }}>
+      <Stack.Screen name="Product" component={ProductScreen}/>
+      <Stack.Screen name="Detail" component={DetailScreen}/>
+    </Stack.Navigator>
+  )
+}
+
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
@@ -58,7 +81,7 @@ function MyDrawer() {
       }}
     >
       <Drawer.Screen name="Home" component={Homescreen} />
-      <Drawer.Screen name="Product" component={ProductScreen} />
+      <Drawer.Screen name="Product" component={ProductStack} />
     </Drawer.Navigator>
   );
 }
